@@ -6,4 +6,6 @@ class Forecastday {
 
     @SerializedName("day")
     var day: Day? = null
+    @SerializedName("date_epoch")
+    var epochTime: Long? = 0L
 }

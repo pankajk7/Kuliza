@@ -1,32 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/background"
     tools:context="weather.app.sample.pankaj.kuliza.view.MainActivity">
 
+    <include
+        android:id="@+id/view_loader_layout"
+        layout="@layout/loader_layout"
+        android:visibility="gone" />
 
-    <ImageView
-        android:id="@+id/iv_loader"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:src="@drawable/loader"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+    <include
+        android:id="@+id/view_main_layout"
+        layout="@layout/main_layout" />
 
-    <TextView
-        android:id="@+id/tv_loader_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/iv_loader"
-        app:layout_constraintLeft_toLeftOf="@+id/iv_loader"
-        app:layout_constraintRight_toRightOf="@+id/iv_loader"
-        android:text="Loading"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:layout_marginTop="8dp"/>
-</android.support.constraint.ConstraintLayout>
+    <include
+        android:id="@+id/view_bottom_sheet"
+        layout="@layout/bottom_sheet_layout" />
+</android.support.design.widget.CoordinatorLayout>

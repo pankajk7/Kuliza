@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Kuliza</string>
+    <string name="enter_city_to_get_weather_info">Enter city to get weather info</string>
+    <string name="get_info">Get Info</string>
+    <string name="fetch_info">Please enter a city to fetch weather info</string>
+    <string name="try_again">Not able to find/fetch info, please try again</string>
 </resources>

@@ -6,4 +6,6 @@ class WeatherData {
 
     @SerializedName("forecast")
     var forecast: Forecast? = null
+    @SerializedName("current")
+    var current: Current? = null
 }
