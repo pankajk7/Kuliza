@@ -13,7 +13,7 @@ import java.util.*
 /**
  * Created by Pankaj on 11/04/18.
  */
-object UiUtils {
+object AppUtils {
 
     fun rotateLoader(context: Context, imageView: ImageView?) {
         val animation = AnimationUtils.loadAnimation(context, R.anim.rotate)
@@ -35,11 +35,11 @@ object UiUtils {
         calendar.timeInMillis = dateLong
         if (areSameDays(calendar, Calendar.getInstance())) {
             timeString = "Today"
-        } else if (isTomorrow(calendar)) {
+        } else if (isTomorrow(calendar.clone() as Calendar)) {
             timeString = "Tomorrow"
         } else {
             val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.US)
-            timeString = dateFormat.format(calendar.getTime())
+            timeString = dateFormat.format(calendar.time)
         }
         return timeString
     }

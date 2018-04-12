@@ -3,16 +3,19 @@ package weather.app.sample.pankaj.kuliza.view
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.*
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.bottom_sheet_layout.*
 import retrofit2.Response
 import weather.app.sample.pankaj.kuliza.R
 import weather.app.sample.pankaj.kuliza.model.WeatherData
 import weather.app.sample.pankaj.kuliza.presenter.WeatherPresenter
-import weather.app.sample.pankaj.kuliza.utils.UiUtils
+import weather.app.sample.pankaj.kuliza.utils.AppUtils
+import weather.app.sample.pankaj.kuliza.view.Adapters.WeatherListAdapter
 
 class MainActivity : AppCompatActivity(), WeatherPresenter.WeatherDataListener<Response<WeatherData>> {
 
@@ -27,6 +30,8 @@ class MainActivity : AppCompatActivity(), WeatherPresenter.WeatherDataListener<R
     private var cityTextView: TextView? = null
     private var bottomSheetBehaviour: BottomSheetBehavior<*>? = null
 
+    private var weatherListAdapter: WeatherListAdapter? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -38,13 +43,13 @@ class MainActivity : AppCompatActivity(), WeatherPresenter.WeatherDataListener<R
         currentTempTextView = view_bottom_sheet.findViewById(R.id.tv_current_temp)
         cityTextView = view_bottom_sheet.findViewById(R.id.tv_city)
 
-        UiUtils.rotateLoader(this@MainActivity, loaderImageView)
+        AppUtils.rotateLoader(this@MainActivity, loaderImageView)
 
         compositeDisposable = CompositeDisposable()
         bottomSheetBehaviour = BottomSheetBehavior.from<View>(view_bottom_sheet)
         setUpBottomSheet()
         button?.setOnClickListener {
-            UiUtils.hideKeyboard(it, this@MainActivity)
+            AppUtils.hideKeyboard(it, this@MainActivity)
             searchString = editText?.text.toString()
             if (WeatherPresenter.isSearchStringValid(it.context, searchString)) {
                 WeatherPresenter.fetchWeatherData(searchString?.trim()!!, this@MainActivity)
@@ -82,10 +87,11 @@ class MainActivity : AppCompatActivity(), WeatherPresenter.WeatherDataListener<R
 
     override fun onSuccess(response: Response<WeatherData>) {
         if (response.isSuccessful) {
-            UiUtils.stopAnimationAndHideLoaderView(loaderImageView, loaderTextView)
+            AppUtils.stopAnimationAndHideLoaderView(loaderImageView, loaderTextView)
             toggleBottomSheetState()
             response.body()?.let {
                 setValuesForCurrentTemperature(it)
+                setUpAdapter(it)
             } ?: run {
                 Toast.makeText(this@MainActivity, getString(R.string.try_again),
                         Toast.LENGTH_LONG).show()
@@ -119,5 +125,16 @@ class MainActivity : AppCompatActivity(), WeatherPresenter.WeatherDataListener<R
     private fun setValuesForCurrentTemperature(weatherData: WeatherData) {
         currentTempTextView?.text = weatherData.current?.currentTemp
         cityTextView?.text = searchString
+    }
+
+    private fun setUpAdapter(weatherData: WeatherData) {
+        rv_weather.layoutManager = LinearLayoutManager(this)
+        if (weatherListAdapter == null) {
+            weatherListAdapter = WeatherListAdapter(this@MainActivity,
+                    weatherData.forecast?.forecastDayList)
+            rv_weather.adapter = weatherListAdapter
+        } else {
+            weatherListAdapter?.setList(weatherData.forecast?.forecastDayList)
+        }
     }
 }
