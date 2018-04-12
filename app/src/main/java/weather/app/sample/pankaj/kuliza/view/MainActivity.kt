@@ -3,7 +3,6 @@ package weather.app.sample.pankaj.kuliza.view
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View
 import android.widget.*
 import io.reactivex.disposables.CompositeDisposable
@@ -45,6 +44,7 @@ class MainActivity : AppCompatActivity(), WeatherPresenter.WeatherDataListener<R
         bottomSheetBehaviour = BottomSheetBehavior.from<View>(view_bottom_sheet)
         setUpBottomSheet()
         button?.setOnClickListener {
+            UiUtils.hideKeyboard(it, this@MainActivity)
             searchString = editText?.text.toString()
             if (WeatherPresenter.isSearchStringValid(it.context, searchString)) {
                 WeatherPresenter.fetchWeatherData(searchString?.trim()!!, this@MainActivity)
@@ -67,6 +67,7 @@ class MainActivity : AppCompatActivity(), WeatherPresenter.WeatherDataListener<R
     }
 
     private fun setUpBottomSheet() {
+        bottomSheetBehaviour?.peekHeight = 48
         bottomSheetBehaviour?.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
@@ -88,12 +89,15 @@ class MainActivity : AppCompatActivity(), WeatherPresenter.WeatherDataListener<R
             } ?: run {
                 Toast.makeText(this@MainActivity, getString(R.string.try_again),
                         Toast.LENGTH_LONG).show()
+                showMainView()
             }
         }
     }
 
-    override fun onError(e: Throwable) {
-        Log.d("MainActivity", e.message)
+    override fun onError() {
+        Toast.makeText(this@MainActivity, getString(R.string.try_again),
+                Toast.LENGTH_LONG).show()
+        showMainView()
     }
 
     override fun onSubscribe(d: Disposable) {

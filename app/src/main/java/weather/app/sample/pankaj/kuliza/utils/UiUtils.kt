@@ -3,6 +3,7 @@ package weather.app.sample.pankaj.kuliza.utils
 import android.content.Context
 import android.view.View
 import android.view.animation.AnimationUtils
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import weather.app.sample.pankaj.kuliza.R
@@ -53,5 +54,12 @@ object UiUtils {
         val previousDate = Calendar.getInstance()
         previousDate.add(Calendar.DATE, 1)
         return areSameDays(inDate, previousDate)
+    }
+
+    fun hideKeyboard(view: View?, context: Context?) {
+        if (view == null || context == null) return
+        val imm = context.getSystemService(
+                Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }

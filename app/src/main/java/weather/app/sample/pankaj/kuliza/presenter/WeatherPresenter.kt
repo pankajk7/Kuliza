@@ -35,7 +35,10 @@ object WeatherPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : SingleObserver<Response<WeatherData>> {
                     override fun onSuccess(t: Response<WeatherData>) {
-                        weatherData.onSuccess(t)
+                        if (t.isSuccessful)
+                            weatherData.onSuccess(t)
+                        else
+                            weatherData.onError()
                     }
 
                     override fun onSubscribe(d: Disposable) {
@@ -43,14 +46,14 @@ object WeatherPresenter {
                     }
 
                     override fun onError(e: Throwable) {
-                        weatherData.onError(e)
+                        weatherData.onError()
                     }
                 })
     }
 
     interface WeatherDataListener<T> {
         fun onSuccess(@NonNull response: T)
-        fun onError(@NonNull e: Throwable)
+        fun onError()
         fun onSubscribe(@NonNull d: Disposable)
     }
 }
