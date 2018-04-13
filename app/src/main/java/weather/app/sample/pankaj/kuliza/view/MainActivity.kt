@@ -5,11 +5,12 @@ import android.support.design.widget.BottomSheetBehavior
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.widget.*
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_sheet_layout.*
+import kotlinx.android.synthetic.main.loader_layout.*
+import kotlinx.android.synthetic.main.main_layout.*
 import retrofit2.Response
 import weather.app.sample.pankaj.kuliza.R
 import weather.app.sample.pankaj.kuliza.model.WeatherData
@@ -23,43 +24,37 @@ class MainActivity : AppCompatActivity(), WeatherPresenter.WeatherDataListener<R
     private var searchString: String? = null
     private var compositeDisposable: CompositeDisposable? = null
 
-    private var loaderImageView: ImageView? = null
-    private var loaderTextView: TextView? = null
-    private var editText: EditText? = null
-    private var button: Button? = null
-    private var currentTempTextView: TextView? = null
-    private var cityTextView: TextView? = null
     private var bottomSheetBehaviour: BottomSheetBehavior<*>? = null
-
     private var weatherListAdapter: WeatherListAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        loaderImageView = view_loader_layout.findViewById(R.id.iv_loader)
-        loaderTextView = view_loader_layout.findViewById(R.id.tv_loader_text)
-        editText = view_main_layout.findViewById(R.id.et_loader)
-        button = view_main_layout.findViewById(R.id.btn_get_info)
-        currentTempTextView = view_bottom_sheet.findViewById(R.id.tv_current_temp)
-        cityTextView = view_bottom_sheet.findViewById(R.id.tv_city)
-
-        AppUtils.rotateLoader(this@MainActivity, loaderImageView)
+        AppUtils.rotateLoader(this@MainActivity, iv_loader)
 
         compositeDisposable = CompositeDisposable()
         bottomSheetBehaviour = BottomSheetBehavior.from<View>(view_bottom_sheet)
         setUpBottomSheet()
-        button?.setOnClickListener {
+        btn_get_info.setOnClickListener {
+            if (!AppUtils.isNetworkAvailable(this@MainActivity)) {
+                AppUtils.showToast(this@MainActivity, R.string.no_internet)
+                return@setOnClickListener
+            }
             AppUtils.hideKeyboard(it, this@MainActivity)
-            searchString = editText?.text.toString()
+            searchString = et_loader?.text.toString()
             if (WeatherPresenter.isSearchStringValid(it.context, searchString)) {
                 WeatherPresenter.fetchWeatherData(searchString?.trim()!!, this@MainActivity)
-                editText?.setText("")
+                et_loader?.setText("")
                 showLoaderView()
             } else {
                 showMainView()
             }
         }
+
+        et_loader.postDelayed({
+            AppUtils.hideKeyboard(et_loader, this@MainActivity)
+        }, 100)
     }
 
     private fun showMainView() {
@@ -88,22 +83,20 @@ class MainActivity : AppCompatActivity(), WeatherPresenter.WeatherDataListener<R
 
     override fun onSuccess(response: Response<WeatherData>) {
         if (response.isSuccessful) {
-            AppUtils.stopAnimationAndHideLoaderView(loaderImageView, loaderTextView)
+            AppUtils.stopAnimationAndHideLoaderView(iv_loader, tv_loader_text)
             toggleBottomSheetState()
             response.body()?.let {
                 setValuesForCurrentTemperature(it)
                 setUpAdapter(it)
             } ?: run {
-                Toast.makeText(this@MainActivity, getString(R.string.try_again),
-                        Toast.LENGTH_LONG).show()
+                AppUtils.showToast(this@MainActivity, R.string.try_again)
                 showMainView()
             }
         }
     }
 
     override fun onError() {
-        Toast.makeText(this@MainActivity, getString(R.string.try_again),
-                Toast.LENGTH_LONG).show()
+        AppUtils.showToast(this@MainActivity, R.string.try_again)
         showMainView()
     }
 
@@ -124,8 +117,8 @@ class MainActivity : AppCompatActivity(), WeatherPresenter.WeatherDataListener<R
     }
 
     private fun setValuesForCurrentTemperature(weatherData: WeatherData) {
-        currentTempTextView?.text = getString(R.string.current_temp, weatherData.current?.currentTemp)
-        cityTextView?.text = searchString
+        tv_current_temp?.text = getString(R.string.current_temp, weatherData.current?.currentTemp)
+        tv_city?.text = searchString
     }
 
     private fun setUpAdapter(weatherData: WeatherData) {

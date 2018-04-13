@@ -1,7 +1,21 @@
 package weather.app.sample.pankaj.kuliza.view.Adapters
 
-import android.content.Contextimport android.graphics.Bitmapimport android.graphics.drawable.BitmapDrawableimport android.support.v7.widget.RecyclerViewimport android.view.LayoutInflaterimport android.view.Viewimport android.view.ViewGroupimport android.widget.TextViewimport com.bumptech.glide.Glideimport com.bumptech.glide.request.target.SimpleTargetimport com.bumptech.glide.request.transition.Transitionimport kotlinx.android.synthetic.main.row_weather_info_layout.view.*import weather.app.sample.pankaj.kuliza.Rimport weather.app.sample.pankaj.kuliza.model.Forecastdayimport java.util.*
-
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
+import kotlinx.android.synthetic.main.row_weather_info_layout.view.*
+import weather.app.sample.pankaj.kuliza.R
+import weather.app.sample.pankaj.kuliza.model.Forecastday
+import weather.app.sample.pankaj.kuliza.utils.AppUtils
+import java.util.*
 
 class WeatherListAdapter(private val context: Context,
                          private var forecastDayList: List<Forecastday>?) :
@@ -33,6 +47,8 @@ class WeatherListAdapter(private val context: Context,
         setImage(imageUrlPrefix + condition?.icon, holder.itemView.tv_type)
         holder.itemView.tv_temperature.text = context.getString(R.string.temperature,
                 day?.minTemp, day?.maxTemp)
+        holder.itemView.tv_day.text = AppUtils.longToDateString(
+                forecastday?.dateString ?: AppUtils.getCurrentDateString())
     }
 
     private fun setImage(imageUrl: String, textView: TextView) {

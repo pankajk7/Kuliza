@@ -6,4 +6,5 @@
     <string name="try_again">Not able to find/fetch info, please try again</string>
     <string name="current_temp">%s°</string>
     <string name="temperature">"%1$s°/%2$s°"</string>
+    <string name="no_internet">No internet or network not available</string>
 </resources>

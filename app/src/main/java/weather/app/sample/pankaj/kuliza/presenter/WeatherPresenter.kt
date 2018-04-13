@@ -2,7 +2,6 @@ package weather.app.sample.pankaj.kuliza.presenter
 
 import android.content.Context
 import android.text.TextUtils
-import android.widget.Toast
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.annotations.NonNull
@@ -13,13 +12,13 @@ import weather.app.sample.pankaj.kuliza.BuildConfig
 import weather.app.sample.pankaj.kuliza.R
 import weather.app.sample.pankaj.kuliza.model.WeatherData
 import weather.app.sample.pankaj.kuliza.rest.WeatherApiService
+import weather.app.sample.pankaj.kuliza.utils.AppUtils
 
 object WeatherPresenter {
 
     fun isSearchStringValid(context: Context, searchString: String?): Boolean {
         if (TextUtils.isEmpty(searchString)) {
-            Toast.makeText(context, context.getString(R.string.fetch_info),
-                    Toast.LENGTH_LONG).show()
+            AppUtils.showToast(context, R.string.fetch_info)
             return false
         }
         return true
