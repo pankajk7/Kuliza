@@ -16,6 +16,7 @@ import weather.app.sample.pankaj.kuliza.model.WeatherData
 import weather.app.sample.pankaj.kuliza.presenter.WeatherPresenter
 import weather.app.sample.pankaj.kuliza.utils.AppUtils
 import weather.app.sample.pankaj.kuliza.view.Adapters.WeatherListAdapter
+import java.util.*
 
 class MainActivity : AppCompatActivity(), WeatherPresenter.WeatherDataListener<Response<WeatherData>> {
 
@@ -123,18 +124,19 @@ class MainActivity : AppCompatActivity(), WeatherPresenter.WeatherDataListener<R
     }
 
     private fun setValuesForCurrentTemperature(weatherData: WeatherData) {
-        currentTempTextView?.text = weatherData.current?.currentTemp
+        currentTempTextView?.text = getString(R.string.current_temp, weatherData.current?.currentTemp)
         cityTextView?.text = searchString
     }
 
     private fun setUpAdapter(weatherData: WeatherData) {
         rv_weather.layoutManager = LinearLayoutManager(this)
+        val forecastdayList = weatherData.forecast?.forecastDayList
+        Collections.sort(forecastdayList, AppUtils.comparator)
         if (weatherListAdapter == null) {
-            weatherListAdapter = WeatherListAdapter(this@MainActivity,
-                    weatherData.forecast?.forecastDayList)
+            weatherListAdapter = WeatherListAdapter(this@MainActivity, forecastdayList)
             rv_weather.adapter = weatherListAdapter
         } else {
-            weatherListAdapter?.setList(weatherData.forecast?.forecastDayList)
+            weatherListAdapter?.setList(forecastdayList)
         }
     }
 }

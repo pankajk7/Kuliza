@@ -7,6 +7,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import weather.app.sample.pankaj.kuliza.R
+import weather.app.sample.pankaj.kuliza.model.Forecastday
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -32,7 +33,9 @@ object AppUtils {
     fun longToDateString(dateLong: Long): String {
         val timeString: String
         val calendar = Calendar.getInstance()
-        calendar.timeInMillis = dateLong
+        calendar.timeZone = TimeZone.getTimeZone("UTC")
+        val date = Date(dateLong)
+        calendar.time = date
         if (areSameDays(calendar, Calendar.getInstance())) {
             timeString = "Today"
         } else if (isTomorrow(calendar.clone() as Calendar)) {
@@ -61,5 +64,9 @@ object AppUtils {
         val imm = context.getSystemService(
                 Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    val comparator = Comparator<Forecastday> { o1, o2 ->
+        o1?.epochTime?.compareTo(o2?.epochTime!!)!!
     }
 }

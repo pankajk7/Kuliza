@@ -4,5 +4,6 @@
     <string name="get_info">Get Info</string>
     <string name="fetch_info">Please enter a city to fetch weather info</string>
     <string name="try_again">Not able to find/fetch info, please try again</string>
+    <string name="current_temp">%s°</string>
     <string name="temperature">"%1$s°/%2$s°"</string>
 </resources>
